@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>خصم / مكافأة / سلفة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body { background: #f4f7fc; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .header h1 { color: #b45309; display: flex; align-items: center; gap: 12px; }
+        .btn-back {
+            background: #b45309;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-back:hover { background: #92400e; }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            align-items: end;
+        }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 6px; color: #334155; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+        }
+        .form-group input:focus, .form-group select:focus { outline: 2px solid #b45309; border-color: transparent; }
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-primary { background: #b45309; color: white; }
+        .btn-primary:hover { background: #92400e; transform: scale(1.02); }
+        .table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid #eef2f6; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th { background: #f1f5f9; padding: 14px; text-align: center; font-weight: 600; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid #eef2f6; }
+        .empty-state { padding: 40px; text-align: center; color: #94a3b8; }
+        .badge-success { background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
+        .badge-danger { background: #fee2e2; color: #991b1b; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
+        .badge-warning { background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
+        .badge-info { background: #e0f2fe; color: #0369a1; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
+        .info-box {
+            background: #f0f9ff;
+            border-right: 4px solid #0ea5e9;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .info-box i { color: #0ea5e9; margin-left: 10px; }
+        .flex { display: flex; gap: 10px; flex-wrap: wrap; }
+        .note {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        @media (max-width: 600px) { .header { flex-direction: column; align-items: stretch; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-gifts"></i> خصم / مكافأة / سلفة</h1>
+        <a href="index.html" class="btn-back"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+    </div>
+
+    <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <strong>ملاحظات:</strong>
+        <span class="badge-success" style="margin:0 8px;">مكافأة</span> تضاف فوراً في القبض
+        <span class="badge-danger" style="margin:0 8px;">خصم</span> يتأخر لآخر الشهر
+        <span class="badge-warning" style="margin:0 8px;">سلفة</span> تُخصم تلقائياً في آخر الشهر
+    </div>
+
+    <!-- نموذج الإضافة الوحيد -->
+    <div class="card">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-pen"></i> تسجيل خصم / مكافأة / سلفة</h3>
+        <div class="form-grid" id="rewardForm">
+            <div class="form-group">
+                <label>اختر العامل</label>
+                <select id="rewardWorkerSelect"><option value="">-- اختر --</option></select>
+            </div>
+            <div class="form-group">
+                <label>النوع</label>
+                <select id="rewardType">
+                    <option value="مكافأة">مكافأة</option>
+                    <option value="خصم">خصم</option>
+                    <option value="سلفة">سلفة</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>المبلغ (جنيه)</label>
+                <input type="number" id="rewardAmount" placeholder="0" step="0.5" />
+            </div>
+            <div class="form-group">
+                <label>السبب</label>
+                <input type="text" id="rewardReason" placeholder="سبب العملية" />
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" id="addRewardBtn"><i class="fas fa-save"></i> تسجيل</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- جدول السجل -->
+    <div class="card">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-history"></i> سجل الخصم والمكافآت والسلف</h3>
+        <div class="table-wrap">
+            <table>
+                <thead><tr>
+                    <th>#</th>
+                    <th>العامل</th>
+                    <th>النوع</th>
+                    <th>المبلغ</th>
+                    <th>السبب</th>
+                    <th>الحالة</th>
+                    <th>التاريخ</th>
+                    <th>الوقت</th>
+                </tr></thead>
+                <tbody id="rewardsTableBody"><tr><td colspan="8" class="empty-state">لا توجد سجلات</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+<script>
+    const SUPABASE_URL = "https://rmruhmstxzeeoqthrneg.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcnVobXN0eHplZW9xdGhybmVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NDgzNDYsImV4cCI6MjA5MzMyNDM0Nn0.WCMyEXEJwj-4TvqJi_UDN5w2uxrAf-ZYljWQthgR4Hg";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function nowISO() { return new Date().toISOString(); }
+    function formatDate(iso) { if(!iso) return '-'; const d=new Date(iso); return d.toLocaleDateString('ar-EG'); }
+    function formatTime(iso) { if(!iso) return '-'; const d=new Date(iso); return d.toLocaleTimeString('ar-EG', {hour:'2-digit',minute:'2-digit'}); }
+
+    async function loadWorkers() {
+        const { data, error } = await supabase.from('workers').select('id, name, hourly_rate').order('name');
+        if(error) return [];
+        return data || [];
+    }
+
+    async function loadRewards() {
+        const { data, error } = await supabase.from('rewards')
+            .select('*, workers(name)')
+            .order('created_at', {ascending:false});
+        if(error) return [];
+        return data || [];
+    }
+
+    async function renderWorkerSelect() {
+        const data = await loadWorkers();
+        const sel = document.getElementById('rewardWorkerSelect');
+        sel.innerHTML = '<option value="">-- اختر --</option>' + data.map(w => `<option value="${w.id}">${w.name}</option>`).join('');
+    }
+
+    function getBadge(type, status) {
+        if(type === 'مكافأة') return '<span class="badge-success">مكافأة</span>';
+        if(type === 'سلفة') {
+            return status === 'paid' ? '<span class="badge-info">سلفة (مسددة)</span>' : '<span class="badge-warning">سلفة (معلقة)</span>';
+        }
+        if(type === 'خصم') {
+            return status === 'paid' ? '<span class="badge-info">خصم (مسدد)</span>' : '<span class="badge-danger">خصم (مؤجل)</span>';
+        }
+        return '';
+    }
+
+    async function renderRewards() {
+        const data = await loadRewards();
+        const tbody = document.getElementById('rewardsTableBody');
+        if(!data.length) { 
+            tbody.innerHTML='<tr><td colspan="8" class="empty-state">لا توجد سجلات</td></tr>'; 
+            return; 
+        }
+        tbody.innerHTML = data.map((r,i) => `
+            <tr>
+                <td>${i+1}</td>
+                <td><strong>${r.workers?.name || 'غير معروف'}</strong></td>
+                <td>${getBadge(r.type, r.status)}</td>
+                <td>${r.amount || 0} ج.م</td>
+                <td>${r.reason || ''}</td>
+                <td>
+                    ${r.type === 'مكافأة' ? '✅ مدفوع' :
+                      r.type === 'سلفة' ? (r.status === 'paid' ? '✅ مسددة' : '⏳ معلقة') :
+                      r.type === 'خصم' ? (r.status === 'paid' ? '✅ مسدد' : '⏳ مؤجل') : ''}
+                </td>
+                <td>${formatDate(r.created_at)}</td>
+                <td>${formatTime(r.created_at)}</td>
+            </tr>
+        `).join('');
+    }
+
+    // إضافة خصم/مكافأة/سلفة
+    document.getElementById('addRewardBtn').addEventListener('click', async function() {
+        const workerId = document.getElementById('rewardWorkerSelect').value;
+        const type = document.getElementById('rewardType').value;
+        const amount = parseFloat(document.getElementById('rewardAmount').value);
+        const reason = document.getElementById('rewardReason').value.trim();
+        
+        if(!workerId || isNaN(amount) || amount<=0) { 
+            alert('اختر عاملاً وأدخل مبلغاً صحيحاً'); 
+            return; 
+        }
+
+        let status = 'pending';
+        
+        // المكافأة تدفع فوراً
+        if (type === 'مكافأة') {
+            status = 'paid';
+        } 
+        // الخصم والسلفة يتأجلو لآخر الشهر
+        else if (type === 'خصم' || type === 'سلفة') {
+            status = 'pending';
+        }
+
+        const { error } = await supabase.from('rewards').insert([{ 
+            worker_id: parseInt(workerId), 
+            type, 
+            amount, 
+            reason, 
+            status: status,
+            created_at: nowISO() 
+        }]);
+
+        if(error) { 
+            alert('خطأ: '+error.message); 
+            return; 
+        }
+        
+        document.getElementById('rewardAmount').value=''; 
+        document.getElementById('rewardReason').value='';
+        renderRewards();
+        alert('✅ تم التسجيل بنجاح');
+    });
+
+    // تحميل البيانات
+    renderWorkerSelect();
+    renderRewards();
+</script>
+</body>
+</html>

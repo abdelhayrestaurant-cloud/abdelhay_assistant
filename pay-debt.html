@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تسديد مديونية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body { background: #f4f7fc; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .header h1 { color: #b45309; display: flex; align-items: center; gap: 12px; }
+        .btn-back {
+            background: #b45309;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-back:hover { background: #92400e; }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            align-items: end;
+        }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 6px; color: #334155; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+        }
+        .form-group input:focus, .form-group select:focus { outline: 2px solid #b45309; border-color: transparent; }
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-success { background: #16a34a; color: white; }
+        .btn-success:hover { background: #15803d; transform: scale(1.02); }
+        .btn-danger { background: #dc2626; color: white; }
+        .btn-danger:hover { background: #b91c1c; }
+        .table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid #eef2f6; }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        th { background: #f1f5f9; padding: 14px; text-align: center; font-weight: 600; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid #eef2f6; }
+        .empty-state { padding: 40px; text-align: center; color: #94a3b8; }
+        .badge-success { background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
+        .badge-danger { background: #fee2e2; color: #991b1b; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
+        .flex { display: flex; gap: 10px; flex-wrap: wrap; }
+        @media (max-width: 600px) { .header { flex-direction: column; align-items: stretch; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-check-circle"></i> تسديد مديونية</h1>
+        <a href="index.html" class="btn-back"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-hand-holding-heart"></i> تسجيل عملية سداد</h3>
+        <div class="form-grid" id="paymentForm">
+            <div class="form-group">
+                <label>اختر العميل</label>
+                <select id="paymentCustomerSelect"><option value="">-- اختر --</option></select>
+            </div>
+            <div class="form-group">
+                <label>المبلغ المدفوع (جنيه)</label>
+                <input type="number" id="paymentAmount" placeholder="المبلغ" />
+            </div>
+            <div class="form-group">
+                <label>ملاحظات</label>
+                <input type="text" id="paymentNote" placeholder="تفاصيل السداد" />
+            </div>
+            <div class="form-group">
+                <button class="btn btn-success" id="payDebtBtn"><i class="fas fa-check"></i> تسجيل السداد</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-history"></i> سجل المدفوعات</h3>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>#</th><th>العميل</th><th>المبلغ</th><th>الملاحظات</th><th>التاريخ</th><th>الوقت</th></tr></thead>
+                <tbody id="paymentsTableBody"><tr><td colspan="6" class="empty-state">لا توجد مدفوعات</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-exclamation-triangle"></i> المديونيات المفتوحة</h3>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>العميل</th><th>المبلغ المتبقي</th><th>تاريخ آخر مديونية</th></tr></thead>
+                <tbody id="openDebtsTableBody"><tr><td colspan="3" class="empty-state">لا توجد مديونيات مفتوحة</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+<script>
+    const SUPABASE_URL = "https://rmruhmstxzeeoqthrneg.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcnVobXN0eHplZW9xdGhybmVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NDgzNDYsImV4cCI6MjA5MzMyNDM0Nn0.WCMyEXEJwj-4TvqJi_UDN5w2uxrAf-ZYljWQthgR4Hg";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function nowISO() { return new Date().toISOString(); }
+    function formatDate(iso) { if(!iso) return '-'; const d=new Date(iso); return d.toLocaleDateString('ar-EG'); }
+    function formatTime(iso) { if(!iso) return '-'; const d=new Date(iso); return d.toLocaleTimeString('ar-EG', {hour:'2-digit',minute:'2-digit'}); }
+
+    async function loadCustomers() {
+        const { data, error } = await supabase.from('customers').select('id, name').order('name');
+        if(error) return [];
+        return data || [];
+    }
+
+    async function loadPayments() {
+        const { data, error } = await supabase.from('payments').select('*, customers(name)').order('created_at', {ascending:false});
+        if(error) return [];
+        return data || [];
+    }
+
+    async function loadOpenDebts() {
+        const { data, error } = await supabase.from('debts')
+            .select('*, customers(name)')
+            .eq('status', 'open')
+            .order('created_at', {ascending:false});
+        if(error) return [];
+        return data || [];
+    }
+
+    async function renderCustomerSelect() {
+        const data = await loadCustomers();
+        const sel = document.getElementById('paymentCustomerSelect');
+        sel.innerHTML = '<option value="">-- اختر --</option>' + data.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+
+    async function renderPayments() {
+        const data = await loadPayments();
+        const tbody = document.getElementById('paymentsTableBody');
+        if(!data.length) { tbody.innerHTML='<tr><td colspan="6" class="empty-state">لا توجد مدفوعات</td></tr>'; return; }
+        tbody.innerHTML = data.map((p,i) => `
+            <tr>
+                <td>${i+1}</td>
+                <td><strong>${p.customers?.name || 'غير معروف'}</strong></td>
+                <td>${p.amount || 0} ج.م</td>
+                <td>${p.note || ''}</td>
+                <td>${formatDate(p.created_at)}</td>
+                <td>${formatTime(p.created_at)}</td>
+            </tr>
+        `).join('');
+    }
+
+    async function renderOpenDebts() {
+        const data = await loadOpenDebts();
+        const tbody = document.getElementById('openDebtsTableBody');
+        if(!data.length) { tbody.innerHTML='<tr><td colspan="3" class="empty-state">لا توجد مديونيات مفتوحة</td></tr>'; return; }
+        // Aggregate by customer
+        const agg = {};
+        data.forEach(d => {
+            if(!agg[d.customer_id]) agg[d.customer_id] = { name: d.customers?.name || 'غير معروف', total: 0 };
+            agg[d.customer_id].total += d.amount;
+        });
+        tbody.innerHTML = Object.values(agg).map(item => `
+            <tr>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.total.toFixed(2)} ج.م</td>
+                <td>${formatDate(data[0]?.created_at)}</td>
+            </tr>
+        `).join('');
+    }
+
+    document.getElementById('payDebtBtn').addEventListener('click', async function() {
+        const customerId = document.getElementById('paymentCustomerSelect').value;
+        const amount = parseFloat(document.getElementById('paymentAmount').value);
+        const note = document.getElementById('paymentNote').value.trim();
+        if(!customerId || isNaN(amount) || amount<=0) { alert('اختر عميلاً وأدخل مبلغاً صحيحاً'); return; }
+        
+        // Insert payment
+        const { error: payError } = await supabase.from('payments').insert([{
+            customer_id: parseInt(customerId),
+            amount,
+            note,
+            created_at: nowISO()
+        }]);
+        if(payError) { alert('خطأ في تسجيل السداد: '+payError.message); return; }
+
+        // Update debts: subtract payment from latest open debt
+        const { data: openDebts } = await supabase.from('debts')
+            .select('id, amount')
+            .eq('customer_id', parseInt(customerId))
+            .eq('status', 'open')
+            .order('created_at', {ascending:true});
+        
+        if(openDebts && openDebts.length > 0) {
+            let remaining = amount;
+            for(let debt of openDebts) {
+                if(remaining <= 0) break;
+                if(debt.amount <= remaining) {
+                    // Close this debt
+                    await supabase.from('debts').update({ status: 'paid' }).eq('id', debt.id);
+                    remaining -= debt.amount;
+                } else {
+                    // Reduce the debt
+                    await supabase.from('debts').update({ amount: debt.amount - remaining }).eq('id', debt.id);
+                    remaining = 0;
+                }
+            }
+        }
+
+        document.getElementById('paymentAmount').value=''; 
+        document.getElementById('paymentNote').value='';
+        renderPayments();
+        renderOpenDebts();
+    });
+
+    renderCustomerSelect();
+    renderPayments();
+    renderOpenDebts();
+</script>
+</body>
+</html>

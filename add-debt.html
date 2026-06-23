@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إضافة مديونية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body { background: #f4f7fc; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .header h1 { color: #b45309; display: flex; align-items: center; gap: 12px; }
+        .btn-back {
+            background: #b45309;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-back:hover { background: #92400e; }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            align-items: end;
+        }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 6px; color: #334155; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+        }
+        .form-group input:focus, .form-group select:focus { outline: 2px solid #b45309; border-color: transparent; }
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-primary { background: #b45309; color: white; }
+        .btn-primary:hover { background: #92400e; transform: scale(1.02); }
+        .table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid #eef2f6; }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        th { background: #f1f5f9; padding: 14px; text-align: center; font-weight: 600; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid #eef2f6; }
+        .empty-state { padding: 40px; text-align: center; color: #94a3b8; }
+        .badge-success { background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; }
+        @media (max-width: 600px) { .header { flex-direction: column; align-items: stretch; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-hand-holding-usd"></i> إضافة مديونية</h1>
+        <a href="index.html" class="btn-back"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-plus-circle"></i> تسجيل مديونية جديدة</h3>
+        <div class="form-grid" id="debtForm">
+            <div class="form-group">
+                <label>اختر العميل</label>
+                <select id="debtCustomerSelect"><option value="">-- اختر --</option></select>
+            </div>
+            <div class="form-group">
+                <label>المبلغ (جنيه)</label>
+                <input type="number" id="debtAmount" placeholder="مثال: 150" />
+            </div>
+            <div class="form-group">
+                <label>ملاحظات</label>
+                <input type="text" id="debtNote" placeholder="سبب المديونية" />
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" id="addDebtBtn"><i class="fas fa-save"></i> تسجيل المديونية</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-list"></i> آخر المديونيات المسجلة</h3>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>#</th><th>العميل</th><th>المبلغ</th><th>الملاحظات</th><th>التاريخ</th><th>الوقت</th><th>الحالة</th></tr></thead>
+                <tbody id="debtsTableBody"><tr><td colspan="7" class="empty-state">لا توجد مديونيات</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+<script>
+    const SUPABASE_URL = "https://rmruhmstxzeeoqthrneg.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcnVobXN0eHplZW9xdGhybmVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NDgzNDYsImV4cCI6MjA5MzMyNDM0Nn0.WCMyEXEJwj-4TvqJi_UDN5w2uxrAf-ZYljWQthgR4Hg";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function nowISO() { return new Date().toISOString(); }
+    function formatDate(iso) { if(!iso) return '-'; const d=new Date(iso); return d.toLocaleDateString('ar-EG'); }
+    function formatTime(iso) { if(!iso) return '-'; const d=new Date(iso); return d.toLocaleTimeString('ar-EG', {hour:'2-digit',minute:'2-digit'}); }
+
+    async function loadCustomers() {
+        const { data, error } = await supabase.from('customers').select('id, name').order('name');
+        if(error) return [];
+        return data || [];
+    }
+
+    async function loadDebts() {
+        const { data, error } = await supabase.from('debts').select('*, customers(name)').order('created_at', {ascending:false});
+        if(error) return [];
+        return data || [];
+    }
+
+    async function renderCustomerSelect() {
+        const data = await loadCustomers();
+        const sel = document.getElementById('debtCustomerSelect');
+        sel.innerHTML = '<option value="">-- اختر --</option>' + data.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+
+    async function renderDebts() {
+        const data = await loadDebts();
+        const tbody = document.getElementById('debtsTableBody');
+        if(!data.length) { tbody.innerHTML='<tr><td colspan="7" class="empty-state">لا توجد مديونيات</td></tr>'; return; }
+        tbody.innerHTML = data.map((d,i) => `
+            <tr>
+                <td>${i+1}</td>
+                <td><strong>${d.customers?.name || 'غير معروف'}</strong></td>
+                <td>${d.amount || 0} ج.م</td>
+                <td>${d.note || ''}</td>
+                <td>${formatDate(d.created_at)}</td>
+                <td>${formatTime(d.created_at)}</td>
+                <td><span class="badge-success">مفتوحة</span></td>
+            </tr>
+        `).join('');
+    }
+
+    document.getElementById('addDebtBtn').addEventListener('click', async function() {
+        const customerId = document.getElementById('debtCustomerSelect').value;
+        const amount = parseFloat(document.getElementById('debtAmount').value);
+        const note = document.getElementById('debtNote').value.trim();
+        if(!customerId || isNaN(amount) || amount<=0) { alert('اختر عميلاً وأدخل مبلغاً صحيحاً'); return; }
+        const { error } = await supabase.from('debts').insert([{ 
+            customer_id: parseInt(customerId), 
+            amount, 
+            note, 
+            created_at: nowISO(),
+            status: 'open'
+        }]);
+        if(error) { alert('خطأ: '+error.message); return; }
+        document.getElementById('debtAmount').value=''; document.getElementById('debtNote').value='';
+        renderDebts();
+    });
+
+    renderCustomerSelect();
+    renderDebts();
+</script>
+</body>
+</html>

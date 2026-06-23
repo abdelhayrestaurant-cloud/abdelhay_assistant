@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>التقرير الشهري</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body { background: #f4f7fc; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .header h1 { color: #b45309; display: flex; align-items: center; gap: 12px; }
+        .btn-back {
+            background: #b45309;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-back:hover { background: #92400e; }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+        .filter-bar .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .filter-bar input {
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            min-width: 150px;
+        }
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-primary { background: #b45309; color: white; }
+        .btn-primary:hover { background: #92400e; transform: scale(1.02); }
+        .btn-success { background: #16a34a; color: white; }
+        .btn-success:hover { background: #15803d; }
+        .table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid #eef2f6; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { background: #f1f5f9; padding: 14px; text-align: center; font-weight: 600; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid #eef2f6; }
+        .empty-state { padding: 40px; text-align: center; color: #94a3b8; }
+        .total-row { background: #fef3c7; font-weight: 700; }
+        .info-box {
+            background: #f0f9ff;
+            border-right: 4px solid #0ea5e9;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .info-box i { color: #0ea5e9; margin-left: 10px; }
+        .quick-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .quick-btns .btn {
+            padding: 6px 16px;
+            font-size: 0.85rem;
+        }
+        @media (max-width: 600px) { .header { flex-direction: column; align-items: stretch; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-chart-bar"></i> التقرير الشهري للعمال</h1>
+        <a href="index.html" class="btn-back"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
+    </div>
+
+    <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <strong>التقرير يشمل:</strong>
+        المكافآت والخصومات والسلف التي تم تسديدها خلال الفترة المحددة
+    </div>
+
+    <div class="card">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-calendar-alt"></i> تحديد الفترة</h3>
+        <div class="filter-bar">
+            <div class="form-group">
+                <label>من تاريخ</label>
+                <input type="date" id="startDate" />
+            </div>
+            <div class="form-group">
+                <label>إلى تاريخ</label>
+                <input type="date" id="endDate" />
+            </div>
+            <div class="form-group" style="flex-direction:row; align-items:center; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-primary" id="showReportBtn"><i class="fas fa-search"></i> عرض التقرير</button>
+                <div class="quick-btns">
+                    <button class="btn btn-success" onclick="setToday()">اليوم</button>
+                    <button class="btn btn-success" onclick="setThisWeek()">هذا الأسبوع</button>
+                    <button class="btn btn-success" onclick="setThisMonth()">هذا الشهر</button>
+                    <button class="btn btn-success" onclick="setLastMonth()">الشهر الماضي</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead><tr>
+                    <th>العامل</th>
+                    <th>إجمالي الساعات</th>
+                    <th>الإضافي (ساعات)</th>
+                    <th>الأساسي</th>
+                    <th>المكافآت</th>
+                    <th>الخصومات</th>
+                    <th>السلف</th>
+                    <th>الصافي</th>
+                </tr></thead>
+                <tbody id="monthlyTableBody"><tr><td colspan="8" class="empty-state">حدد الفترة واضغط عرض</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+<script>
+    const SUPABASE_URL = "https://rmruhmstxzeeoqthrneg.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcnVobXN0eHplZW9xdGhybmVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NDgzNDYsImV4cCI6MjA5MzMyNDM0Nn0.WCMyEXEJwj-4TvqJi_UDN5w2uxrAf-ZYljWQthgR4Hg";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function formatDate(iso) {
+        if (!iso) return '-';
+        const d = new Date(iso);
+        return d.toLocaleDateString('ar-EG');
+    }
+
+    // دوال تحديد الفترات السريعة
+    function setToday() {
+        const today = new Date();
+        const dateStr = today.toISOString().split('T')[0];
+        document.getElementById('startDate').value = dateStr;
+        document.getElementById('endDate').value = dateStr;
+    }
+
+    function setThisWeek() {
+        const now = new Date();
+        const day = now.getDay();
+        const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+        const start = new Date(now);
+        start.setDate(diff);
+        start.setHours(0,0,0,0);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6);
+        end.setHours(23,59,59,999);
+        
+        document.getElementById('startDate').value = start.toISOString().split('T')[0];
+        document.getElementById('endDate').value = end.toISOString().split('T')[0];
+    }
+
+    function setThisMonth() {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        
+        document.getElementById('startDate').value = start.toISOString().split('T')[0];
+        document.getElementById('endDate').value = end.toISOString().split('T')[0];
+    }
+
+    function setLastMonth() {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const end = new Date(now.getFullYear(), now.getMonth(), 0);
+        
+        document.getElementById('startDate').value = start.toISOString().split('T')[0];
+        document.getElementById('endDate').value = end.toISOString().split('T')[0];
+    }
+
+    // تعيين التواريخ الافتراضية (هذا الشهر)
+    function setDefaultDates() {
+        setThisMonth();
+    }
+
+    // جلب التقرير
+    document.getElementById('showReportBtn').addEventListener('click', async function() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        
+        if (!startDate || !endDate) {
+            alert('يرجى تحديد تاريخ البداية والنهاية');
+            return;
+        }
+
+        if (startDate > endDate) {
+            alert('تاريخ البداية يجب أن يكون قبل تاريخ النهاية');
+            return;
+        }
+
+        const start = new Date(startDate);
+        start.setHours(0,0,0,0);
+        const startISO = start.toISOString();
+        
+        const end = new Date(endDate);
+        end.setHours(23,59,59,999);
+        const endISO = end.toISOString();
+
+        // جلب العمال
+        const { data: workers } = await supabase.from('workers').select('id, name, hourly_rate');
+        if (!workers || !workers.length) {
+            document.getElementById('monthlyTableBody').innerHTML = '<tr><td colspan="8" class="empty-state">لا يوجد عمال</td></tr>';
+            return;
+        }
+
+        // جلب بيانات القبض
+        const { data: payrolls } = await supabase.from('payroll')
+            .select('worker_id, hours, rate, overtime_hours, overtime_rate')
+            .gte('created_at', startISO)
+            .lte('created_at', endISO);
+
+        // جلب المكافآت (المسددة)
+        const { data: bonuses } = await supabase.from('rewards')
+            .select('worker_id, amount')
+            .eq('type', 'مكافأة')
+            .eq('status', 'paid')
+            .gte('created_at', startISO)
+            .lte('created_at', endISO);
+
+        // جلب الخصومات (المسددة)
+        const { data: discounts } = await supabase.from('rewards')
+            .select('worker_id, amount')
+            .eq('type', 'خصم')
+            .eq('status', 'paid')
+            .gte('created_at', startISO)
+            .lte('created_at', endISO);
+
+        // جلب السلف (المسددة)
+        const { data: advances } = await supabase.from('rewards')
+            .select('worker_id, amount')
+            .eq('type', 'سلفة')
+            .eq('status', 'paid')
+            .gte('created_at', startISO)
+            .lte('created_at', endISO);
+
+        const map = {};
+        workers.forEach(w => {
+            map[w.id] = {
+                name: w.name,
+                hours: 0,
+                overtime: 0,
+                basePay: 0,
+                bonuses: 0,
+                discounts: 0,
+                advances: 0
+            };
+        });
+
+        // تجميع بيانات القبض
+        (payrolls || []).forEach(p => {
+            if (map[p.worker_id]) {
+                map[p.worker_id].hours += p.hours || 0;
+                map[p.worker_id].overtime += p.overtime_hours || 0;
+                map[p.worker_id].basePay += (p.hours || 0) * (p.rate || 0) + (p.overtime_hours || 0) * (p.overtime_rate || 0);
+            }
+        });
+
+        // تجميع المكافآت
+        (bonuses || []).forEach(b => {
+            if (map[b.worker_id]) {
+                map[b.worker_id].bonuses += b.amount || 0;
+            }
+        });
+
+        // تجميع الخصومات
+        (discounts || []).forEach(d => {
+            if (map[d.worker_id]) {
+                map[d.worker_id].discounts += d.amount || 0;
+            }
+        });
+
+        // تجميع السلف
+        (advances || []).forEach(a => {
+            if (map[a.worker_id]) {
+                map[a.worker_id].advances += a.amount || 0;
+            }
+        });
+
+        const tbody = document.getElementById('monthlyTableBody');
+        const rows = Object.values(map);
+        
+        if (!rows.length) {
+            tbody.innerHTML = '<tr><td colspan="8" class="empty-state">لا توجد بيانات في هذه الفترة</td></tr>';
+            return;
+        }
+
+        let grandTotal = 0;
+        const filteredRows = rows.filter(w => w.hours > 0 || w.bonuses > 0 || w.discounts > 0 || w.advances > 0);
+        
+        if (!filteredRows.length) {
+            tbody.innerHTML = '<tr><td colspan="8" class="empty-state">لا توجد حركات في هذه الفترة</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = filteredRows.map(w => {
+            const net = w.basePay + w.bonuses - w.discounts - w.advances;
+            grandTotal += net;
+            return `<tr>
+                <td><strong>${w.name}</strong></td>
+                <td>${w.hours.toFixed(1)}</td>
+                <td>${w.overtime.toFixed(1)}</td>
+                <td>${w.basePay.toFixed(2)} ج.م</td>
+                <td>${w.bonuses.toFixed(2)} ج.م</td>
+                <td>${w.discounts.toFixed(2)} ج.م</td>
+                <td>${w.advances.toFixed(2)} ج.م</td>
+                <td><strong>${net.toFixed(2)}</strong> ج.م</td>
+            </tr>`;
+        }).join('') + `<tr class="total-row">
+            <td colspan="7">الإجمالي الكلي</td>
+            <td>${grandTotal.toFixed(2)} ج.م</td>
+        </tr>`;
+    });
+
+    // تحميل التواريخ الافتراضية
+    setDefaultDates();
+</script>
+</body>
+</html>
