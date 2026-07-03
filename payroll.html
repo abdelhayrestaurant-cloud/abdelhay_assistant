@@ -1,390 +1,1094 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>تسجيل القبض</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- html2pdf library -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+      integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-        body { background: #f4f7fc; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Tajawal", sans-serif;
+      }
+      body {
+        background: #f4f7fc;
+        padding: 20px;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+      .header h1 {
+        color: #b45309;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .btn-back {
+        background: #b45309;
+        color: white;
+        padding: 10px 24px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-back:hover {
+        background: #92400e;
+      }
+      .btn-info {
+        background: #0ea5e9;
+        color: white;
+      }
+      .btn-info:hover {
+        background: #0284c7;
+        transform: scale(1.02);
+      }
+      .btn-secondary {
+        background: #64748b;
+        color: white;
+      }
+      .btn-secondary:hover {
+        background: #475569;
+        transform: scale(1.02);
+      }
+      .btn-success {
+        background: #16a34a;
+        color: white;
+      }
+      .btn-success:hover {
+        background: #15803d;
+        transform: scale(1.02);
+      }
+      .card {
+        background: white;
+        border-radius: 24px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        align-items: end;
+      }
+      .form-group label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 6px;
+        color: #334155;
+      }
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.95rem;
+      }
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: 2px solid #b45309;
+        border-color: transparent;
+      }
+      .form-group input[readonly] {
+        background: #f1f5f9;
+      }
+      .btn {
+        padding: 10px 24px;
+        border: none;
+        border-radius: 40px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+      }
+      .btn-primary {
+        background: #b45309;
+        color: white;
+      }
+      .btn-primary:hover {
+        background: #92400e;
+        transform: scale(1.02);
+      }
+      .table-wrap {
+        overflow-x: auto;
+        border-radius: 16px;
+        border: 1px solid #eef2f6;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+      }
+      th {
+        background: #f1f5f9;
+        padding: 14px;
+        text-align: center;
+        font-weight: 600;
+      }
+      td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #eef2f6;
+      }
+      .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: #94a3b8;
+      }
+      .info-box {
+        background: #f0f9ff;
+        border-right: 4px solid #0ea5e9;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+      }
+      .info-box i {
+        color: #0ea5e9;
+        margin-left: 10px;
+      }
+      .summary-box {
+        background: #fef3c7;
+        border-right: 4px solid #f59e0b;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-top: 15px;
+      }
+      .summary-box strong {
+        color: #92400e;
+      }
+      .flex {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .mt-2 {
+        margin-top: 15px;
+      }
+      .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: end;
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 16px;
+        margin-bottom: 20px;
+      }
+      .filter-row .form-group {
+        flex: 1;
+        min-width: 150px;
+      }
+      .filter-row .form-group label {
+        font-size: 0.85rem;
+        color: #64748b;
+      }
+      .filter-row .form-group input,
+      .filter-row .form-group select {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+      }
+
+      /* ====== طباعة التقرير ====== */
+      /* ====== طباعة التقرير ====== */
+      #reportContent {
+        display: none;
+        background: white;
+        padding: 30px 40px;
+        border-radius: 16px;
+        direction: rtl;
+        font-family: "Tajawal", sans-serif;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        text-align: center;
+      }
+      #reportContent .report-header {
+        text-align: center;
+        border-bottom: 3px solid #b45309;
+        padding-bottom: 20px;
+        margin-bottom: 25px;
+      }
+      #reportContent .report-header h2 {
+        color: #b45309;
+        font-size: 2.2rem;
+        margin: 0;
+      }
+      #reportContent .report-header p {
+        color: #64748b;
+        font-size: 1.1rem;
+        margin: 5px 0 0;
+      }
+      #reportContent table {
+        width: 95%;
+        border-collapse: collapse;
+        margin: 15px auto;
+        font-size: 1rem;
+      }
+      #reportContent table th {
+        background: #f1f5f9;
+        padding: 10px 14px;
+        border: 1.5px solid #94a3b8;
+        text-align: center;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+      #reportContent table td {
+        padding: 10px 14px;
+        border: 1.5px solid #94a3b8;
+        text-align: center;
+        font-size: 1rem;
+      }
+      #reportContent .total-row {
+        background: #fef3c7;
+        font-weight: 700;
+      }
+      #reportContent .total-row td {
+        font-size: 1.05rem;
+      }
+      #reportContent .worker-info {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        background: #f8fafc;
+        padding: 12px 20px;
+        border-radius: 12px;
+        margin: 0 auto 20px auto;
+        gap: 25px;
+        width: 95%;
+      }
+      #reportContent .worker-info span {
+        font-size: 1rem;
+      }
+      #reportContent .worker-info strong {
+        color: #1e293b;
+      }
+      #reportContent .footer {
+        text-align: center;
+        margin-top: 25px;
+        padding-top: 15px;
+        border-top: 2px solid #e2e8f0;
+        color: #94a3b8;
+        font-size: 0.9rem;
+      }
+      #reportContent .report-period {
+        text-align: center;
+        font-size: 1rem;
+        color: #64748b;
+        margin-bottom: 15px;
+      }
+
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        #reportContent,
+        #reportContent * {
+          visibility: visible;
+        }
+        #reportContent {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          padding: 15px;
+          display: block !important;
+        }
+        .no-print {
+          display: none !important;
+        }
+      }
+
+      @media (max-width: 600px) {
         .header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .filter-row {
+          flex-direction: column;
+        }
+        .filter-row .form-group {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1><i class="fas fa-coins"></i> تسجيل القبض</h1>
+        <a href="index.html" class="btn-back"
+          ><i class="fas fa-arrow-right"></i> العودة للرئيسية</a
+        >
+      </div>
+
+      <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <strong>ملاحظة:</strong> عند تسجيل القبض، يتم تسديد جميع المستحقات
+        المعلقة للعامل
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom: 20px">
+          <i class="fas fa-calculator"></i> تسجيل ساعات العمل
+        </h3>
+        <div class="form-grid" id="payrollForm">
+          <div class="form-group">
+            <label>اختر العامل</label>
+            <select id="payrollWorkerSelect">
+              <option value="">-- اختر --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>عدد الساعات</label>
+            <input type="number" id="payrollHours" placeholder="0" step="0.5" />
+          </div>
+          <div class="form-group">
+            <label>سعر الساعة (تلقائي)</label>
+            <input type="text" id="payrollRateDisplay" readonly />
+          </div>
+          <div class="form-group">
+            <label>ساعات إضافية</label>
+            <input
+              type="number"
+              id="payrollOvertimeHours"
+              placeholder="0"
+              step="0.5"
+              value="0"
+            />
+          </div>
+          <div class="form-group">
+            <label>سعر الإضافي</label>
+            <input
+              type="number"
+              id="payrollOvertimeRate"
+              placeholder="سعر الإضافي"
+              step="0.5"
+            />
+          </div>
+          <div class="form-group">
+            <button class="btn btn-primary" id="addPayrollBtn">
+              <i class="fas fa-save"></i> تسجيل القبض
+            </button>
+          </div>
+        </div>
+
+        <!-- ملخص المستحقات المعلقة -->
+        <div id="workerSummary" class="summary-box" style="display: none">
+          <strong>📋 المستحقات المعلقة للعامل:</strong><br />
+          <span id="summaryBonus">المكافآت: 0 ج.م</span> |
+          <span id="summaryDiscount">الخصومات: 0 ج.م</span> |
+          <span id="summaryAdvance">السلف: 0 ج.م</span> |
+          <span id="summaryTotal" style="font-size: 1.1rem; color: #b45309"
+            >صافي المستحقات: 0 ج.م</span
+          >
+        </div>
+      </div>
+
+      <div class="card">
+        <div
+          style="
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        .header h1 { color: #b45309; display: flex; align-items: center; gap: 12px; }
-        .btn-back {
-            background: #b45309;
-            color: white;
-            padding: 10px 24px;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-back:hover { background: #92400e; }
-        .card {
-            background: white;
-            border-radius: 24px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            align-items: end;
-        }
-        .form-group label { display: block; font-weight: 500; margin-bottom: 6px; color: #334155; }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 0.95rem;
-        }
-        .form-group input:focus, .form-group select:focus { outline: 2px solid #b45309; border-color: transparent; }
-        .form-group input[readonly] { background: #f1f5f9; }
-        .btn {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-        }
-        .btn-primary { background: #b45309; color: white; }
-        .btn-primary:hover { background: #92400e; transform: scale(1.02); }
-        .table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid #eef2f6; }
-        table { width: 100%; border-collapse: collapse; min-width: 900px; }
-        th { background: #f1f5f9; padding: 14px; text-align: center; font-weight: 600; }
-        td { padding: 12px; text-align: center; border-bottom: 1px solid #eef2f6; }
-        .empty-state { padding: 40px; text-align: center; color: #94a3b8; }
-        .info-box {
-            background: #f0f9ff;
-            border-right: 4px solid #0ea5e9;
-            padding: 15px 20px;
-            border-radius: 12px;
+            gap: 10px;
             margin-bottom: 20px;
-        }
-        .info-box i { color: #0ea5e9; margin-left: 10px; }
-        .summary-box {
-            background: #fef3c7;
-            border-right: 4px solid #f59e0b;
-            padding: 15px 20px;
-            border-radius: 12px;
-            margin-top: 15px;
-        }
-        .summary-box strong { color: #92400e; }
-        @media (max-width: 600px) { .header { flex-direction: column; align-items: stretch; } }
-    </style>
-</head>
-<body>
-<div class="container">
-    <div class="header">
-        <h1><i class="fas fa-coins"></i> تسجيل القبض</h1>
-        <a href="index.html" class="btn-back"><i class="fas fa-arrow-right"></i> العودة للرئيسية</a>
-    </div>
-
-    <div class="info-box">
-        <i class="fas fa-info-circle"></i>
-        <strong>ملاحظة:</strong> عند تسجيل القبض، يتم تسديد جميع المستحقات المعلقة للعامل
-    </div>
-
-    <div class="card">
-        <h3 style="margin-bottom: 20px;"><i class="fas fa-calculator"></i> تسجيل ساعات العمل</h3>
-        <div class="form-grid" id="payrollForm">
-            <div class="form-group">
-                <label>اختر العامل</label>
-                <select id="payrollWorkerSelect"><option value="">-- اختر --</option></select>
-            </div>
-            <div class="form-group">
-                <label>عدد الساعات</label>
-                <input type="number" id="payrollHours" placeholder="0" step="0.5" />
-            </div>
-            <div class="form-group">
-                <label>سعر الساعة (تلقائي)</label>
-                <input type="text" id="payrollRateDisplay" readonly />
-            </div>
-            <div class="form-group">
-                <label>ساعات إضافية</label>
-                <input type="number" id="payrollOvertimeHours" placeholder="0" step="0.5" value="0" />
-            </div>
-            <div class="form-group">
-                <label>سعر الإضافي</label>
-                <input type="number" id="payrollOvertimeRate" placeholder="سعر الإضافي" step="0.5" />
-            </div>
-            <div class="form-group">
-                <button class="btn btn-primary" id="addPayrollBtn"><i class="fas fa-save"></i> تسجيل القبض</button>
-            </div>
+          "
+        >
+          <h3 style="margin: 0"><i class="fas fa-receipt"></i> سجل القبض</h3>
+          <div class="flex">
+            <button class="btn btn-info" id="printReportBtn">
+              <i class="fas fa-print"></i> طباعة التقرير
+            </button>
+            <button class="btn btn-secondary" id="resetFilterBtn">
+              <i class="fas fa-undo"></i> إلغاء الفلترة
+            </button>
+          </div>
         </div>
-        
-        <!-- ملخص المستحقات المعلقة -->
-        <div id="workerSummary" class="summary-box" style="display:none;">
-            <strong>📋 المستحقات المعلقة للعامل:</strong><br />
-            <span id="summaryBonus">المكافآت: 0 ج.م</span> | 
-            <span id="summaryDiscount">الخصومات: 0 ج.م</span> | 
-            <span id="summaryAdvance">السلف: 0 ج.م</span> | 
-            <span id="summaryTotal" style="font-size:1.1rem;color:#b45309;">صافي المستحقات: 0 ج.م</span>
-        </div>
-    </div>
 
-    <div class="card">
-        <h3 style="margin-bottom: 20px;"><i class="fas fa-receipt"></i> سجل القبض</h3>
+        <!-- فلترة -->
+        <div class="filter-row">
+          <div class="form-group">
+            <label><i class="fas fa-calendar-alt"></i> من تاريخ</label>
+            <input type="date" id="filterStartDate" />
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-calendar-alt"></i> إلى تاريخ</label>
+            <input type="date" id="filterEndDate" />
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> العامل</label>
+            <select id="filterWorkerSelect">
+              <option value="">-- الكل --</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 0 0 auto">
+            <button class="btn btn-success" id="applyFilterBtn">
+              <i class="fas fa-filter"></i> تطبيق الفلترة
+            </button>
+          </div>
+        </div>
+
         <div class="table-wrap">
-            <table>
-                <thead><tr>
-                    <th>#</th>
-                    <th>العامل</th>
-                    <th>الساعات</th>
-                    <th>الأساسي</th>
-                    <th>الإضافي</th>
-                    <th>المكافأة</th>
-                    <th>الخصم</th>
-                    <th>السلفة</th>
-                    <th>الصافي</th>
-                    <th>التاريخ</th>
-                    <th>الوقت</th>
-                </tr></thead>
-                <tbody id="payrollTableBody"><tr><td colspan="11" class="empty-state">لا توجد سجلات قبض</td></tr></tbody>
-            </table>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>العامل</th>
+                <th>الساعات</th>
+                <th>الأساسي</th>
+                <th>الإضافي</th>
+                <th>المكافأة</th>
+                <th>الخصم</th>
+                <th>السلفة</th>
+                <th>الصافي</th>
+                <th>التاريخ</th>
+                <th>الوقت</th>
+              </tr>
+            </thead>
+            <tbody id="payrollTableBody">
+              <tr>
+                <td colspan="11" class="empty-state">لا توجد سجلات قبض</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-<script>
-    const SUPABASE_URL = "https://rmruhmstxzeeoqthrneg.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcnVobXN0eHplZW9xdGhybmVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NDgzNDYsImV4cCI6MjA5MzMyNDM0Nn0.WCMyEXEJwj-4TvqJi_UDN5w2uxrAf-ZYljWQthgR4Hg";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <!-- ====== محتوى التقرير للطباعة ====== -->
+    <div id="reportContent">
+      <div class="report-header">
+        <h2>🍽️ مطعم عبدالحي الكبابجي</h2>
+        <p>تقرير سجل القبض</p>
+        <div class="report-period" id="reportPeriod"></div>
+      </div>
+      <div class="worker-info" id="workerInfo" style="display: none">
+        <span
+          ><strong>اسم العامل:</strong>
+          <span id="reportWorkerName">-</span></span
+        >
+        <span
+          ><strong>سعر الساعة:</strong>
+          <span id="reportWorkerRate">-</span> ج.م</span
+        >
+        <span
+          ><strong>إجمالي الساعات:</strong>
+          <span id="reportTotalHours">-</span></span
+        >
+        <span
+          ><strong>إجمالي الإضافي:</strong>
+          <span id="reportTotalOvertime">-</span></span
+        >
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>العامل</th>
+            <th>الساعات</th>
+            <th>الأساسي</th>
+            <th>الإضافي</th>
+            <th>المكافأة</th>
+            <th>الخصم</th>
+            <th>السلفة</th>
+            <th>الصافي</th>
+            <th>التاريخ</th>
+          </tr>
+        </thead>
+        <tbody id="reportTableBody"></tbody>
+        <tfoot id="reportTableFooter"></tfoot>
+      </table>
+      <div class="footer">
+        تم إنشاء التقرير بواسطة نظام مطعم عبدالحي الكبابجي &copy; 2026
+      </div>
+    </div>
 
-    function nowISO() { return new Date().toISOString(); }
-    function formatDate(iso) { if(!iso) return '-'; const d=new Date(iso); return d.toLocaleDateString('ar-EG'); }
-    function formatTime(iso) { if(!iso) return '-'; const d=new Date(iso); return d.toLocaleTimeString('ar-EG', {hour:'2-digit',minute:'2-digit'}); }
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+    <script>
+      const SUPABASE_URL = "https://rmruhmstxzeeoqthrneg.supabase.co";
+      const SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtcnVobXN0eHplZW9xdGhybmVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NDgzNDYsImV4cCI6MjA5MzMyNDM0Nn0.WCMyEXEJwj-4TvqJi_UDN5w2uxrAf-ZYljWQthgR4Hg";
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function loadWorkers() {
-        const { data, error } = await supabase.from('workers').select('id, name, hourly_rate').order('name');
-        if(error) return [];
+      function nowISO() {
+        return new Date().toISOString();
+      }
+      function formatDate(iso) {
+        if (!iso) return "-";
+        const d = new Date(iso);
+        return d.toLocaleDateString("ar-EG");
+      }
+      function formatTime(iso) {
+        if (!iso) return "-";
+        const d = new Date(iso);
+        return d.toLocaleTimeString("ar-EG", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+      function formatDateTime(iso) {
+        return formatDate(iso) + " " + formatTime(iso);
+      }
+
+      // ====== متغيرات الفلترة ======
+      let filterStartDate = "";
+      let filterEndDate = "";
+      let filterWorkerId = "";
+
+      // ====== جلب البيانات ======
+      async function loadWorkers() {
+        const { data, error } = await supabase
+          .from("workers")
+          .select("id, name, hourly_rate")
+          .order("name");
+        if (error) return [];
         return data || [];
-    }
+      }
 
-    async function loadPayroll() {
-        const { data, error } = await supabase.from('payroll')
-            .select('*, workers(name, hourly_rate)')
-            .order('created_at', {ascending:false});
-        if(error) return [];
+      async function loadPayroll(filters = {}) {
+        let query = supabase
+          .from("payroll")
+          .select("*, workers(name, hourly_rate)")
+          .order("created_at", { ascending: false });
+
+        if (filters.startDate) {
+          const start = new Date(filters.startDate);
+          start.setHours(0, 0, 0, 0);
+          query = query.gte("created_at", start.toISOString());
+        }
+        if (filters.endDate) {
+          const end = new Date(filters.endDate);
+          end.setHours(23, 59, 59, 999);
+          query = query.lte("created_at", end.toISOString());
+        }
+        if (filters.workerId) {
+          query = query.eq("worker_id", parseInt(filters.workerId));
+        }
+
+        const { data, error } = await query;
+        if (error) return [];
         return data || [];
-    }
+      }
 
-    // جلب المستحقات المعلقة للعامل (status = 'pending') - استعلام واحد
-    async function getPendingRewards(workerId) {
-        const { data, error } = await supabase.from('rewards')
-            .select('*')
-            .eq('worker_id', workerId)
-            .eq('status', 'pending');
+      async function getPendingRewards(workerId) {
+        const { data, error } = await supabase
+          .from("rewards")
+          .select("*")
+          .eq("worker_id", workerId)
+          .eq("status", "pending");
 
         if (error) return { bonus: 0, discount: 0, advance: 0 };
-        
-        let bonus = 0, discount = 0, advance = 0;
-        (data || []).forEach(r => {
-            if (r.type === 'مكافأة') bonus += r.amount;
-            if (r.type === 'خصم') discount += r.amount;
-            if (r.type === 'سلفة') advance += r.amount;
-        });
-        
-        return { bonus, discount, advance };
-    }
 
-    // جلب كل المستحقات لكل القبضات دفعة واحدة
-    async function getAllRewardsForPayrolls(payrollIds) {
+        let bonus = 0,
+          discount = 0,
+          advance = 0;
+        (data || []).forEach((r) => {
+          if (r.type === "مكافأة") bonus += r.amount;
+          if (r.type === "خصم") discount += r.amount;
+          if (r.type === "سلفة") advance += r.amount;
+        });
+
+        return { bonus, discount, advance };
+      }
+
+      async function getAllRewardsForPayrolls(payrollIds) {
         if (!payrollIds || payrollIds.length === 0) return {};
-        
-        const { data, error } = await supabase.from('rewards')
-            .select('*')
-            .in('payroll_id', payrollIds);
+
+        const { data, error } = await supabase
+          .from("rewards")
+          .select("*")
+          .in("payroll_id", payrollIds);
 
         if (error) return {};
-        
-        // تجميع المستحقات حسب payroll_id
+
         const result = {};
-        (data || []).forEach(r => {
-            if (!result[r.payroll_id]) {
-                result[r.payroll_id] = { bonus: 0, discount: 0, advance: 0 };
-            }
-            if (r.type === 'مكافأة') result[r.payroll_id].bonus += r.amount;
-            if (r.type === 'خصم') result[r.payroll_id].discount += r.amount;
-            if (r.type === 'سلفة') result[r.payroll_id].advance += r.amount;
+        (data || []).forEach((r) => {
+          if (!result[r.payroll_id]) {
+            result[r.payroll_id] = { bonus: 0, discount: 0, advance: 0 };
+          }
+          if (r.type === "مكافأة") result[r.payroll_id].bonus += r.amount;
+          if (r.type === "خصم") result[r.payroll_id].discount += r.amount;
+          if (r.type === "سلفة") result[r.payroll_id].advance += r.amount;
         });
-        
+
         return result;
-    }
+      }
 
-    async function renderWorkerSelect() {
+      // ====== عرض البيانات ======
+      async function renderWorkerSelects() {
         const data = await loadWorkers();
-        const sel = document.getElementById('payrollWorkerSelect');
-        sel.innerHTML = '<option value="">-- اختر --</option>' + data.map(w => `<option value="${w.id}">${w.name}</option>`).join('');
-        document.getElementById('payrollWorkerSelect').dispatchEvent(new Event('change'));
-    }
 
-    // عرض ملخص المستحقات المعلقة
-    async function showWorkerSummary() {
-        const workerId = document.getElementById('payrollWorkerSelect').value;
-        const summaryDiv = document.getElementById('workerSummary');
-        
-        if(!workerId) {
-            summaryDiv.style.display = 'none';
-            return;
+        const mainSel = document.getElementById("payrollWorkerSelect");
+        mainSel.innerHTML =
+          '<option value="">-- اختر --</option>' +
+          data
+            .map((w) => `<option value="${w.id}">${w.name}</option>`)
+            .join("");
+
+        const filterSel = document.getElementById("filterWorkerSelect");
+        filterSel.innerHTML =
+          '<option value="">-- الكل --</option>' +
+          data
+            .map((w) => `<option value="${w.id}">${w.name}</option>`)
+            .join("");
+
+        document
+          .getElementById("payrollWorkerSelect")
+          .dispatchEvent(new Event("change"));
+      }
+
+      async function showWorkerSummary() {
+        const workerId = document.getElementById("payrollWorkerSelect").value;
+        const summaryDiv = document.getElementById("workerSummary");
+
+        if (!workerId) {
+          summaryDiv.style.display = "none";
+          return;
         }
-        
+
         const rewards = await getPendingRewards(parseInt(workerId));
         const total = rewards.bonus - rewards.discount - rewards.advance;
-        
-        document.getElementById('summaryBonus').textContent = `المكافآت: +${rewards.bonus.toFixed(2)} ج.م`;
-        document.getElementById('summaryDiscount').textContent = `الخصومات: -${rewards.discount.toFixed(2)} ج.م`;
-        document.getElementById('summaryAdvance').textContent = `السلف: -${rewards.advance.toFixed(2)} ج.م`;
-        document.getElementById('summaryTotal').textContent = `صافي المستحقات: ${total.toFixed(2)} ج.م`;
-        
-        summaryDiv.style.display = 'block';
-    }
 
-    async function renderPayroll() {
-        const data = await loadPayroll();
-        const tbody = document.getElementById('payrollTableBody');
-        if(!data.length) { 
-            tbody.innerHTML='<tr><td colspan="11" class="empty-state">لا توجد سجلات قبض</td></tr>'; 
-            return; 
+        document.getElementById("summaryBonus").textContent =
+          `المكافآت: +${rewards.bonus.toFixed(2)} ج.م`;
+        document.getElementById("summaryDiscount").textContent =
+          `الخصومات: -${rewards.discount.toFixed(2)} ج.م`;
+        document.getElementById("summaryAdvance").textContent =
+          `السلف: -${rewards.advance.toFixed(2)} ج.م`;
+        document.getElementById("summaryTotal").textContent =
+          `صافي المستحقات: ${total.toFixed(2)} ج.م`;
+
+        summaryDiv.style.display = "block";
+      }
+
+      async function renderPayroll(filters = {}) {
+        const data = await loadPayroll(filters);
+        const tbody = document.getElementById("payrollTableBody");
+        if (!data.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="11" class="empty-state">لا توجد سجلات قبض</td></tr>';
+          return;
         }
-        
-        // 1. جمع كل الـ payroll IDs
-        const payrollIds = data.map(p => p.id);
-        
-        // 2. جلب كل المستحقات لكل القبضات دفعة واحدة
+
+        const payrollIds = data.map((p) => p.id);
         const rewardsMap = await getAllRewardsForPayrolls(payrollIds);
-        
-        // 3. بناء الصفوف
+
         let rows = [];
-        for(let p of data) {
-            const rewards = rewardsMap[p.id] || { bonus: 0, discount: 0, advance: 0 };
-            
-            const basePay = (p.hours || 0)*(p.rate || 0);
-            const overtimePay = (p.overtime_hours || 0)*(p.overtime_rate || 0);
-            const total = basePay + overtimePay + rewards.bonus - rewards.discount - rewards.advance;
-            
-            rows.push({
-                id: p.id,
-                workerName: p.workers?.name || 'غير معروف',
-                hours: p.hours || 0,
-                rate: p.rate || 0,
-                overtimeHours: p.overtime_hours || 0,
-                overtimeRate: p.overtime_rate || 0,
-                basePay: basePay,
-                overtimePay: overtimePay,
-                bonus: rewards.bonus,
-                discount: rewards.discount,
-                advance: rewards.advance,
-                total: total,
-                created_at: p.created_at
-            });
+        for (let p of data) {
+          const rewards = rewardsMap[p.id] || {
+            bonus: 0,
+            discount: 0,
+            advance: 0,
+          };
+
+          const basePay = (p.hours || 0) * (p.rate || 0);
+          const overtimePay = (p.overtime_hours || 0) * (p.overtime_rate || 0);
+          const total =
+            basePay +
+            overtimePay +
+            rewards.bonus -
+            rewards.discount -
+            rewards.advance;
+
+          rows.push({
+            id: p.id,
+            workerName: p.workers?.name || "غير معروف",
+            workerRate: p.workers?.hourly_rate || 0,
+            hours: p.hours || 0,
+            rate: p.rate || 0,
+            overtimeHours: p.overtime_hours || 0,
+            overtimeRate: p.overtime_rate || 0,
+            basePay: basePay,
+            overtimePay: overtimePay,
+            bonus: rewards.bonus,
+            discount: rewards.discount,
+            advance: rewards.advance,
+            total: total,
+            created_at: p.created_at,
+          });
         }
 
-        tbody.innerHTML = rows.map((p,i) => `
+        tbody.innerHTML = rows
+          .map(
+            (p, i) => `
             <tr>
-                <td>${i+1}</td>
+                <td>${i + 1}</td>
                 <td><strong>${p.workerName}</strong></td>
                 <td>${p.hours}</td>
                 <td>${p.basePay.toFixed(2)} ج.م</td>
                 <td>${p.overtimeHours} س × ${p.overtimeRate} = ${p.overtimePay.toFixed(2)}</td>
-                <td>${p.bonus > 0 ? '+'+p.bonus.toFixed(2) : '-'}</td>
-                <td>${p.discount > 0 ? '-'+p.discount.toFixed(2) : '-'}</td>
-                <td>${p.advance > 0 ? '-'+p.advance.toFixed(2) : '-'}</td>
+                <td>${p.bonus > 0 ? "+" + p.bonus.toFixed(2) : "-"}</td>
+                <td>${p.discount > 0 ? "-" + p.discount.toFixed(2) : "-"}</td>
+                <td>${p.advance > 0 ? "-" + p.advance.toFixed(2) : "-"}</td>
                 <td><strong>${p.total.toFixed(2)}</strong> ج.م</td>
                 <td>${formatDate(p.created_at)}</td>
                 <td>${formatTime(p.created_at)}</td>
             </tr>
-        `).join('');
-    }
+        `,
+          )
+          .join("");
+      }
 
-    document.getElementById('payrollWorkerSelect').addEventListener('change', async function() {
-        const id = this.value;
-        if(!id) { 
-            document.getElementById('payrollRateDisplay').value=''; 
-            document.getElementById('workerSummary').style.display = 'none';
-            return; 
-        }
-        const { data } = await supabase.from('workers').select('hourly_rate').eq('id', parseInt(id)).single();
-        document.getElementById('payrollRateDisplay').value = data?.hourly_rate || 0;
-        showWorkerSummary();
-    });
+      // ====== طباعة التقرير بناءً على الفلترة ======
+      async function printReport() {
+        // جلب بيانات الفلترة الحالية
+        const startDate = document.getElementById("filterStartDate").value;
+        const endDate = document.getElementById("filterEndDate").value;
+        const workerId = document.getElementById("filterWorkerSelect").value;
 
-    document.getElementById('addPayrollBtn').addEventListener('click', async function() {
-        const workerId = document.getElementById('payrollWorkerSelect').value;
-        const hours = parseFloat(document.getElementById('payrollHours').value) || 0;
-        const overtimeHours = parseFloat(document.getElementById('payrollOvertimeHours').value) || 0;
-        const overtimeRate = parseFloat(document.getElementById('payrollOvertimeRate').value) || 0;
-        
-        if(!workerId || hours<=0) { 
-            alert('اختر عاملاً وأدخل عدد ساعات صحيح'); 
-            return; 
-        }
-        
-        const { data: wData } = await supabase.from('workers').select('hourly_rate').eq('id', parseInt(workerId)).single();
-        const rate = wData?.hourly_rate || 0;
-        
-        // 1. تسجيل القبض
-        const { data: payrollData, error: payrollError } = await supabase.from('payroll').insert([{
-            worker_id: parseInt(workerId),
-            hours, rate,
-            overtime_hours: overtimeHours,
-            overtime_rate: overtimeRate,
-            created_at: nowISO()
-        }]).select();
-        
-        if(payrollError) { 
-            alert('خطأ في تسجيل القبض: '+payrollError.message); 
-            return; 
+        // تطبيق الفلترة
+        let filters = {};
+        if (startDate) filters.startDate = startDate;
+        if (endDate) filters.endDate = endDate;
+        if (workerId) filters.workerId = workerId;
+
+        // جلب البيانات المفلترة
+        const data = await loadPayroll(filters);
+
+        if (!data || data.length === 0) {
+          alert("⚠️ لا توجد بيانات للطباعة في الفترة المحددة");
+          return;
         }
 
-        const payrollId = payrollData[0].id;
+        const payrollIds = data.map((p) => p.id);
+        const rewardsMap = await getAllRewardsForPayrolls(payrollIds);
 
-        // 2. جلب جميع المستحقات المعلقة للعامل
-        const { data: pendingRewards } = await supabase.from('rewards')
-            .select('id')
-            .eq('worker_id', parseInt(workerId))
-            .eq('status', 'pending');
-        
-        // 3. تحديث المستحقات وربطها بالقبضة
-        if(pendingRewards && pendingRewards.length > 0) {
-            const ids = pendingRewards.map(r => r.id);
-            await supabase.from('rewards')
-                .update({ 
-                    status: 'paid',
-                    payroll_id: payrollId 
-                })
-                .in('id', ids);
+        // تجهيز البيانات للعرض
+        let rows = [];
+        let totalHours = 0,
+          totalOvertime = 0,
+          totalBonus = 0,
+          totalDiscount = 0,
+          totalAdvance = 0,
+          totalNet = 0;
+        let workerName = "";
+        let workerRate = 0;
+
+        for (let p of data) {
+          const rewards = rewardsMap[p.id] || {
+            bonus: 0,
+            discount: 0,
+            advance: 0,
+          };
+          const basePay = (p.hours || 0) * (p.rate || 0);
+          const overtimePay = (p.overtime_hours || 0) * (p.overtime_rate || 0);
+          const total =
+            basePay +
+            overtimePay +
+            rewards.bonus -
+            rewards.discount -
+            rewards.advance;
+
+          totalHours += p.hours || 0;
+          totalOvertime += p.overtime_hours || 0;
+          totalBonus += rewards.bonus;
+          totalDiscount += rewards.discount;
+          totalAdvance += rewards.advance;
+          totalNet += total;
+
+          if (p.workers?.name) {
+            workerName = p.workers.name;
+            workerRate = p.workers.hourly_rate || 0;
+          }
+
+          rows.push({
+            index: rows.length + 1,
+            workerName: p.workers?.name || "غير معروف",
+            date: formatDate(p.created_at),
+            hours: p.hours || 0,
+            rate: p.rate || 0,
+            overtimeHours: p.overtime_hours || 0,
+            overtimeRate: p.overtime_rate || 0,
+            basePay: basePay,
+            overtimePay: overtimePay,
+            bonus: rewards.bonus,
+            discount: rewards.discount,
+            advance: rewards.advance,
+            total: total,
+          });
         }
-        
-        document.getElementById('payrollHours').value='';
-        document.getElementById('payrollOvertimeHours').value='0';
-        document.getElementById('payrollOvertimeRate').value='';
-        renderPayroll();
-        showWorkerSummary();
-        alert('✅ تم تسجيل القبض وتسديد جميع المستحقات بنجاح');
-    });
 
-    renderWorkerSelect();
-    renderPayroll();
-</script>
-</body>
+        // عرض معلومات التقرير
+        const periodText = [];
+        if (startDate) periodText.push(`من ${formatDate(startDate)}`);
+        if (endDate) periodText.push(`إلى ${formatDate(endDate)}`);
+        document.getElementById("reportPeriod").textContent = periodText.length
+          ? periodText.join(" ")
+          : "جميع الفترات";
+
+        // عرض معلومات العامل (إذا كان محدد)
+        const workerInfoDiv = document.getElementById("workerInfo");
+        if (workerId) {
+          workerInfoDiv.style.display = "flex";
+          document.getElementById("reportWorkerName").textContent = workerName;
+          document.getElementById("reportWorkerRate").textContent = workerRate;
+          document.getElementById("reportTotalHours").textContent =
+            totalHours.toFixed(1);
+          document.getElementById("reportTotalOvertime").textContent =
+            totalOvertime.toFixed(1);
+        } else {
+          workerInfoDiv.style.display = "none";
+        }
+
+        // عرض الجدول (بدون عمود الوقت)
+        const tbody = document.getElementById("reportTableBody");
+        tbody.innerHTML = rows
+          .map(
+            (p) => `
+            <tr>
+                <td>${p.index}</td>
+                <td>${p.workerName}</td>
+                <td>${p.hours}</td>
+                <td>${p.basePay.toFixed(2)} ج.م</td>
+                <td>${p.overtimeHours} س × ${p.overtimeRate} = ${p.overtimePay.toFixed(2)}</td>
+                <td>${p.bonus > 0 ? "+" + p.bonus.toFixed(2) : "-"}</td>
+                <td>${p.discount > 0 ? "-" + p.discount.toFixed(2) : "-"}</td>
+                <td>${p.advance > 0 ? "-" + p.advance.toFixed(2) : "-"}</td>
+                <td><strong>${p.total.toFixed(2)}</strong> ج.م</td>
+                <td>${p.date}</td>
+            </tr>
+        `,
+          )
+          .join("");
+
+        document.getElementById("reportTableFooter").innerHTML = `
+            <tr class="total-row">
+                <td colspan="2"><strong>الإجمالي</strong></td>
+                <td><strong>${totalHours.toFixed(1)}</strong></td>
+                <td><strong>${(totalHours * (workerRate || 0)).toFixed(2)} ج.م</strong></td>
+                <td><strong>${totalOvertime.toFixed(1)}</strong></td>
+                <td><strong>+${totalBonus.toFixed(2)}</strong></td>
+                <td><strong>-${totalDiscount.toFixed(2)}</strong></td>
+                <td><strong>-${totalAdvance.toFixed(2)}</strong></td>
+                <td><strong>${totalNet.toFixed(2)} ج.م</strong></td>
+                <td></td>
+            </tr>
+        `;
+
+        // طباعة PDF
+        const reportDiv = document.getElementById("reportContent");
+        reportDiv.style.display = "block";
+        // طباعة PDF - بالعرض عشان الأعمدة كلها تظهر
+        const opt = {
+          margin: [8, 8, 8, 8],
+          filename: `تقرير_القبض_${new Date().toISOString().split("T")[0]}.pdf`,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: {
+            scale: 2.5,
+            letterRendering: true,
+            useCORS: true,
+            width: reportDiv.scrollWidth,
+          },
+          jsPDF: {
+            unit: "mm",
+            format: "a4",
+            orientation: "landscape", // ← غيرناها للعرض
+          },
+        };
+
+        html2pdf()
+          .set(opt)
+          .from(reportDiv)
+          .save()
+          .then(() => {
+            reportDiv.style.display = "none";
+          })
+          .catch((err) => {
+            console.error(err);
+            window.print();
+            reportDiv.style.display = "none";
+          });
+      }
+
+      // ====== تطبيق الفلترة ======
+      async function applyFilter() {
+        const startDate = document.getElementById("filterStartDate").value;
+        const endDate = document.getElementById("filterEndDate").value;
+        const workerId = document.getElementById("filterWorkerSelect").value;
+
+        if (startDate && endDate && startDate > endDate) {
+          alert("⚠️ تاريخ البداية يجب أن يكون قبل تاريخ النهاية");
+          return;
+        }
+
+        filterStartDate = startDate;
+        filterEndDate = endDate;
+        filterWorkerId = workerId;
+
+        await renderPayroll({
+          startDate: startDate,
+          endDate: endDate,
+          workerId: workerId,
+        });
+      }
+
+      // ====== إلغاء الفلترة ======
+      async function resetFilter() {
+        document.getElementById("filterStartDate").value = "";
+        document.getElementById("filterEndDate").value = "";
+        document.getElementById("filterWorkerSelect").value = "";
+
+        filterStartDate = "";
+        filterEndDate = "";
+        filterWorkerId = "";
+
+        await renderPayroll({});
+      }
+
+      // ====== الأحداث ======
+      document
+        .getElementById("payrollWorkerSelect")
+        .addEventListener("change", async function () {
+          const id = this.value;
+          if (!id) {
+            document.getElementById("payrollRateDisplay").value = "";
+            document.getElementById("workerSummary").style.display = "none";
+            return;
+          }
+          const { data } = await supabase
+            .from("workers")
+            .select("hourly_rate")
+            .eq("id", parseInt(id))
+            .single();
+          document.getElementById("payrollRateDisplay").value =
+            data?.hourly_rate || 0;
+          showWorkerSummary();
+        });
+
+      document
+        .getElementById("addPayrollBtn")
+        .addEventListener("click", async function () {
+          const workerId = document.getElementById("payrollWorkerSelect").value;
+          const hours =
+            parseFloat(document.getElementById("payrollHours").value) || 0;
+          const overtimeHours =
+            parseFloat(document.getElementById("payrollOvertimeHours").value) ||
+            0;
+          const overtimeRate =
+            parseFloat(document.getElementById("payrollOvertimeRate").value) ||
+            0;
+
+          if (!workerId || hours <= 0) {
+            alert("اختر عاملاً وأدخل عدد ساعات صحيح");
+            return;
+          }
+
+          const { data: wData } = await supabase
+            .from("workers")
+            .select("hourly_rate")
+            .eq("id", parseInt(workerId))
+            .single();
+          const rate = wData?.hourly_rate || 0;
+
+          const { data: payrollData, error: payrollError } = await supabase
+            .from("payroll")
+            .insert([
+              {
+                worker_id: parseInt(workerId),
+                hours,
+                rate,
+                overtime_hours: overtimeHours,
+                overtime_rate: overtimeRate,
+                created_at: nowISO(),
+              },
+            ])
+            .select();
+
+          if (payrollError) {
+            alert("خطأ في تسجيل القبض: " + payrollError.message);
+            return;
+          }
+
+          const payrollId = payrollData[0].id;
+
+          const { data: pendingRewards } = await supabase
+            .from("rewards")
+            .select("id")
+            .eq("worker_id", parseInt(workerId))
+            .eq("status", "pending");
+
+          if (pendingRewards && pendingRewards.length > 0) {
+            const ids = pendingRewards.map((r) => r.id);
+            await supabase
+              .from("rewards")
+              .update({
+                status: "paid",
+                payroll_id: payrollId,
+              })
+              .in("id", ids);
+          }
+
+          document.getElementById("payrollHours").value = "";
+          document.getElementById("payrollOvertimeHours").value = "0";
+          document.getElementById("payrollOvertimeRate").value = "";
+
+          await applyFilter();
+          showWorkerSummary();
+          alert("✅ تم تسجيل القبض وتسديد جميع المستحقات بنجاح");
+        });
+
+      document
+        .getElementById("applyFilterBtn")
+        .addEventListener("click", applyFilter);
+      document
+        .getElementById("resetFilterBtn")
+        .addEventListener("click", resetFilter);
+      document
+        .getElementById("printReportBtn")
+        .addEventListener("click", printReport);
+
+      // ====== التهيئة ======
+      async function init() {
+        await renderWorkerSelects();
+        await renderPayroll({});
+
+        const today = new Date().toISOString().split("T")[0];
+        document.getElementById("filterEndDate").value = today;
+
+        const firstDay = new Date(
+          new Date().getFullYear(),
+          new Date().getMonth(),
+          1,
+        )
+          .toISOString()
+          .split("T")[0];
+        document.getElementById("filterStartDate").value = firstDay;
+      }
+
+      init();
+    </script>
+  </body>
 </html>
